@@ -261,10 +261,16 @@ _start:
 	sub	bx, cx
 	jmp	.op_done
 .mul:
+	mov	ax, cx
+	mul	bx
+	mov	bx, ax
+
 	jmp	.op_done
 .div:
-	; TODO
-	jmp	.op_done
+	xor	dx, dx
+	mov	ax, bx
+	div	cx
+	mov	bx, ax
 
 .op_done:
 	push	bx

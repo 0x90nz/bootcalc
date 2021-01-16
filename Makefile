@@ -8,7 +8,7 @@ all: calc.bin
 
 .PHONY: run
 run: all
-	qemu-system-i386 -drive format=raw,file=calc.bin
+	qemu-system-i386 -drive format=raw,file=calc.bin -serial mon:stdio
 
 .PHONY: clean
 clean:
