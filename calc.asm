@@ -1,9 +1,17 @@
+; This is a *very* simple RPN calculator in x86 (16 bit) assembly
+; it adheres to the cdecl ABI mostly. Clobbers are listed in case I ever
+; want to optimise it so it's a bit more compact.
+;
+; It's currently missing some 'nice to have' features like graceful error
+; handling, but what do you expect me to do in 512 bytes
+
 bits 16
 org 0x7c00
 
 	jmp	0:_start	
 
 ; Put a single char to the screen
+; Params:	(byte) char to put to screen
 ; Clobbers:	ax
 putc:
 	push	bp
@@ -17,6 +25,9 @@ putc:
 	pop	bp
 	ret
 
+; Put a string to the display
+; Params:	(word) pointer to string
+; Clobbers: 	ax
 puts:
 	push	bp
 	mov	bp, sp
@@ -43,6 +54,8 @@ puts:
 	pop	bp
 	ret
 
+; Get a single ASCII character from the keyboard
+; Returns:	the char
 getc:
 	xor	ah, ah
 	int	16h
@@ -57,6 +70,7 @@ getc:
 
 ; Get a number from keyboard. Wraps get_num_sc
 ; Clobbers:	ax, cx
+; Returns:	the number
 get_num:
 	push	'0'
 	call	get_num_sc
@@ -64,8 +78,9 @@ get_num:
 	ret
 
 ; Get a number from keyboard with a given starting char
-; Params:	inital char
+; Params:	(byte) inital char
 ; Clobbers: 	ax, cx 
+; Returns:	the number
 get_num_sc:
 	push	bp
 	mov	bp, sp
@@ -109,7 +124,8 @@ get_num_sc:
 
 
 ; Print a number using putc.
-; Clobbers ax, cx, dx
+; Params: 	(word) value
+; Clobbers:	ax, cx, dx
 print_num:
 	push	bp
 	mov	bp, sp
@@ -140,7 +156,8 @@ print_num:
 	ret
 
 ; Push an item onto the stack
-; Clobbers: ax
+; Params: 	(word) value
+; Clobbers: 	ax
 push_item:
 	push	bp
 	mov	bp, sp
@@ -163,7 +180,7 @@ push_item:
 	ret
 
 ; Get an item off the stack
-; Returns: ax
+; Returns: 	value from stack
 pop_item:
 	push	bp
 	mov	bp, sp
@@ -194,6 +211,7 @@ pop_item:
 	pop	bp
 	ret
 
+; Main routine, contains processing loop
 _start:
 	mov	sp, 0xffff
 	mov	ax, 0x7000
