@@ -3,11 +3,15 @@
 ; want to optimise it so it's a bit more compact.
 ;
 ; It's currently missing some 'nice to have' features like graceful error
-; handling, but what do you expect me to do in 512 bytes
+; handling, but what do you expect me to do in 512 bytes?
 
 bits 16
 org 0x7c00
 
+	; We do this far jump because well *almost* all BIOS implementations do
+	; the sensible thing and start us off at 0000:7c00, some might do wacky
+	; things like start at 07c0:000. This avoids that and sets us at a known
+	; place. Probably not really needed, but eh, why not, it doesn't hurt
 	jmp	0:_start	
 
 ; Put a single char to the screen
